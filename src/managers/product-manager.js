@@ -19,14 +19,14 @@ class ProductManager {
         }
     }
 
-    async addProduct({ title, description, price, code, stock }) {
-        if (!title || !description || !price || !code || !img || !stock) {
+    async addProduct({ title, description, price, code, stock, category }) {
+        if (!title || !description || !price || !code || !stock || !category) {
             console.log("Debes completar todos los campos para continuar");
             return;
         }
 
         if (this.products.some(item => item.code === code)) {
-            console.log("El codigo debe ser unico");
+            console.log("El código debe ser único");
             return;
         }
 
@@ -36,7 +36,8 @@ class ProductManager {
             description,
             price,
             code,
-            stock
+            stock,
+            category,  // Agregamos el campo category
         };
 
         this.products.push(newProduct);
@@ -44,27 +45,50 @@ class ProductManager {
         console.log("Producto Añadido:", newProduct);
     }
 
-    async getProducts() {
+    async getProducts({ page = 1, limit = 10, sort = 'asc', category, available }) {
         try {
-            return await this.readFile(); 
+            // Filtrar por categoría, si se proporciona
+            let filteredProducts = this.products;
+
+            if (category) {
+                filteredProducts = filteredProducts.filter(p => p.category === category);
+            }
+
+            // Filtrar por disponibilidad, si se proporciona
+            if (available !== undefined) {
+                filteredProducts = filteredProducts.filter(p => p.stock > 0 === available);
+            }
+
+            // Ordenar por precio (ascendente o descendente)
+            if (sort === 'desc') {
+                filteredProducts = filteredProducts.sort((a, b) => b.price - a.price);
+            } else {
+                filteredProducts = filteredProducts.sort((a, b) => a.price - b.price);
+            }
+
+            // Paginación: Obtener solo los productos de la página solicitada
+            const start = (page - 1) * limit;
+            const end = start + limit;
+            const paginatedProducts = filteredProducts.slice(start, end);
+
+            return paginatedProducts;
         } catch (error) {
-            console.error("Error al leer la archivo", error); 
+            console.error("Error al obtener los productos:", error);
             return [];
         }
     }
 
     async getProductById(id) {
         try {
-            const foundProduct = this.products.find(item => item.id === id); 
+            const foundProduct = this.products.find(item => item.id === id);
 
             if (!foundProduct) {
-                console.log("No se encuentra disponible este producto"); 
-                return null; 
+                console.log("No se encuentra disponible este producto");
+                return null;
             }
-            console.log("No se encuentra este producto", foundProduct); 
             return foundProduct; 
         } catch (error) {
-            console.error("Error no se encuentra el ID disponible", error); 
+            console.error("Error al obtener el producto por ID:", error);
             return null;
         }
     }
@@ -83,14 +107,14 @@ class ProductManager {
             const index = this.products.findIndex(item => item.id === id); 
 
             if (index !== -1) {
-                this.products[index] = { ...this.products[index], ...updatedProduct }; 
+                this.products[index] = { ...this.products[index], ...updatedProduct };
                 await this.saveFile(this.products); 
-                console.log("Este producto se encuentra disponible", this.products[index]); 
+                console.log("Producto actualizado:", this.products[index]);
             } else {
-                console.log("No se encuentra este producto"); 
+                console.log("No se encuentra este producto");
             }
         } catch (error) {
-            console.error("Error al acutalizar este prodcuto", error); 
+            console.error("Error al actualizar el producto:", error); 
         }
     }
 
@@ -101,12 +125,12 @@ class ProductManager {
             if (index !== -1) {
                 this.products.splice(index, 1); 
                 await this.saveFile(this.products); 
-                console.log("Producto eliminado"); 
+                console.log("Producto eliminado");
             } else {
-                console.log("No se encuentra este producto"); 
+                console.log("No se encuentra este producto");
             }
         } catch (error) {
-            console.error("Error al elimiar el producto", error); 
+            console.error("Error al eliminar el producto:", error); 
         }
     }
 }
