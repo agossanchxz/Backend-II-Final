@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos en Tiempo Real</title>
+</head>
+<body>
+    <h1>Lista de Productos en Tiempo Real</h1>
+    <ul id="lista-productos">
+        {{#each productos}}
+            <li>{{this}}</li>
+        {{/each}}
+    </ul>
+
+    <input id="nuevoProducto" type="text" placeholder="Agregar nuevo producto">
+    <button id="agregarProducto">Agregar</button>
+    <input id="productoEliminar" type="text" placeholder="Eliminar producto">
+    <button id="eliminarProducto">Eliminar</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

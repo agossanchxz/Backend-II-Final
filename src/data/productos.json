@@ -1,0 +1,26 @@
+[
+  {
+      "title": "Yogurt",
+      "description": "La serenisima",
+      "code": "P001",
+      "img": "sin imagen",
+      "price": 2.500,
+      "stock": 50
+  },
+  {
+      "title": "Jugo",
+      "description": "Clight",
+      "code": "P002",
+      "img": "sin imagen",
+      "price": 1.000,
+      "stock": 80
+  },
+  {
+      "title": "Yerba Mate",
+      "description": "Playadito",
+      "code": "P003",
+      "img": "sin imagen",
+      "price": 4.000,
+      "stock": 100
+  }
+]

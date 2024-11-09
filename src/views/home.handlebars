@@ -1,0 +1,59 @@
+<h1>Mis productos</h1>
+<div class="contenedorCards">
+    {{#if productos.length}}
+        {{#each productos}}
+            <div class="card">
+                <h2>{{this.title}}</h2>
+                <p>{{this.description}}</p>
+                <p>Precio: ${{this.price}}</p>
+                <p>Stock: {{this.stock}}</p>
+                <p>Categoría: {{this.category}}</p>
+                <button class="verDetalles" onclick="window.location='/products/{{this._id}}'">Ver detalles</button>
+                <button class="agregarCarrito" data-id="{{this._id}}">Agregar al carrito</button>
+            </div>
+        {{/each}}
+    {{else}}
+        <p>No hay productos disponibles.</p>
+    {{/if}}
+</div>
+
+<div class="paginacion">
+    {{#if hasPrevPage}}
+        <a href="/products?limit={{limit}}&page={{prevPage}}&sort={{sort}}&query={{query}}" class="paginaAnterior">Página anterior</a>
+    {{/if}}
+
+    <span class="paginaActual">Página {{page}}</span>
+
+    {{#if hasNextPage}}
+        <a href="/products?limit={{limit}}&page={{nextPage}}&sort={{sort}}&query={{query}}" class="paginaSiguiente">Página siguiente</a>
+    {{/if}}
+</div>
+
+<script>
+    document.querySelectorAll('.agregarCarrito').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const productId = e.target.getAttribute('data-id');
+            const cartId = 'TU_CART_ID'; 
+
+            fetch(`/carts/${cartId}/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ productId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Producto agregado al carrito');
+                } else {
+                    alert('Hubo un error al agregar el producto al carrito');
+                }
+            })
+            .catch(error => {
+                console.error('Error al agregar al carrito:', error);
+                alert('Hubo un error');
+            });
+        });
+    });
+</script>
