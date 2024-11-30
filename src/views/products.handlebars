@@ -5,3 +5,32 @@
 <p>Stock: {{producto.stock}}</p>
 <button class="agregarCarrito" data-id="{{producto._id}}">Agregar al carrito</button>
 <a href="/products">Volver a la lista de productos</a>
+
+<script>
+
+    const cartId = '{{cartId}}'; 
+
+    document.querySelector('.agregarCarrito').addEventListener('click', function () {
+        const productId = this.getAttribute('data-id');
+
+        fetch(`/carts/${cartId}/add`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Producto agregado al carrito');
+            } else {
+                alert('Hubo un error al agregar el producto al carrito');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Hubo un error');
+        });
+    });
+</script>
