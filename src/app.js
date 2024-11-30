@@ -10,6 +10,7 @@ import ProductManager from './managers/product-manager.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import "./database.js";
+import session from 'express-session';  // Agregar el middleware de sesiones
 
 const __filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(__filename);
@@ -18,6 +19,14 @@ const app = express();
 const PORT = 8080;
 const cartManager = new CartManager(path.join(_dirname, 'data', 'carts.json'));
 const productManager = new ProductManager(path.join(_dirname, "data", "productos.json"));
+
+// Configuración de sesiones
+app.use(session({
+    secret: 'mi-secreto', // Clave para la firma de la sesión
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }  // Usa true si estás en HTTPS
+}));
 
 // Middlewares
 app.use(express.json());
@@ -34,18 +43,25 @@ app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use("/", viewsRouter);
 
-
 const initialProducts = [
     { title: "Fideos", description: "Marolio", code: "abc444", price: 1.5, img: "sin imagen", stock: 85 },
     { title: "Pure de Tomate", description: "Arcor", code: "pmr333", price: 800, img: "sin imagen", stock: 50 },
-   
 ];
-
 
 app.get('/products', (req, res) => {
     res.render('home', { layout: 'main', productos: initialProducts });
 });
 
+// Ruta para crear un carrito y guardar el cartId en la sesión
+app.post('/api/carts', async (req, res) => {
+    try {
+        const newCart = await cartManager.crearCarrito();
+        req.session.cartId = newCart.id;  // Guardar cartId en la sesión
+        res.status(201).json({ cartId: newCart.id });
+    } catch (error) {
+        res.status(500).json({ message: "Error al crear el carrito", error: error.message });
+    }
+});
 
 const httpServer = app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
@@ -53,29 +69,25 @@ const httpServer = app.listen(PORT, () => {
 
 const io = new Server(httpServer);
 
-
+// Emitir productos a través de websockets
 const updateProducts = async () => {
     const productos = await productManager.getProducts();
-    io.emit("productos", productos); // Emitir la lista de productos a todos los clientes
+    io.emit("productos", productos);  // Emitir la lista de productos a todos los clientes
 };
-
 
 io.on("connection", async (socket) => {
     console.log("Un cliente se conectó");
 
-   
-    socket.emit("productos", await productManager.getProducts());
+    socket.emit("productos", await productManager.getProducts());  // Emitir productos al conectar
 
-   
     socket.on("addProduct", async (newProduct) => {
         await productManager.addProduct(newProduct);
-        await updateProducts(); 
+        await updateProducts();
     });
 
- 
     socket.on("deleteProduct", async (id) => {
         await productManager.deleteProduct(id);
-        await updateProducts(); 
+        await updateProducts();
     });
 });
 
@@ -87,7 +99,7 @@ app.post('/api/products', async (req, res) => {
             return res.status(400).json({ error: 'Faltan campos requeridos' });
         }
         await productManager.addProduct(newProduct);
-        await updateProducts(); 
+        await updateProducts();
         res.status(201).json({ message: 'Producto agregado exitosamente' });
     } catch (error) {
         console.error("Error al agregar producto:", error);
@@ -95,7 +107,7 @@ app.post('/api/products', async (req, res) => {
     }
 });
 
-
+// Actualizar un producto (PUT)
 app.put('/api/products/:id', async (req, res) => {
     try {
         const productId = parseInt(req.params.id);
@@ -106,7 +118,7 @@ app.put('/api/products/:id', async (req, res) => {
         }
 
         await productManager.updateProduct(productId, updatedData);
-        await updateProducts(); 
+        await updateProducts();
         res.status(200).json({ message: 'Producto actualizado exitosamente' });
     } catch (error) {
         console.error("Error al actualizar producto:", error);
@@ -114,12 +126,12 @@ app.put('/api/products/:id', async (req, res) => {
     }
 });
 
-
+// Eliminar un producto (DELETE)
 app.delete('/api/products/:id', async (req, res) => {
     try {
         const productId = parseInt(req.params.id);
         await productManager.deleteProduct(productId);
-        await updateProducts(); 
+        await updateProducts();
         res.status(200).json({ message: 'Producto eliminado exitosamente' });
     } catch (error) {
         console.error("Error al eliminar producto:", error);
