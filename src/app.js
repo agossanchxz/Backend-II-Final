@@ -38,7 +38,7 @@ app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", path.join(_dirname, "views"));
 
-// Rutas
+
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use("/", viewsRouter);
@@ -52,7 +52,7 @@ app.get('/products', (req, res) => {
     res.render('home', { layout: 'main', productos: initialProducts });
 });
 
-// Ruta para crear un carrito y guardar el cartId en la sesión
+
 app.post('/api/carts', async (req, res) => {
     try {
         const newCart = await cartManager.crearCarrito();
@@ -69,7 +69,7 @@ const httpServer = app.listen(PORT, () => {
 
 const io = new Server(httpServer);
 
-// Emitir productos a través de websockets
+
 const updateProducts = async () => {
     const productos = await productManager.getProducts();
     io.emit("productos", productos);  // Emitir la lista de productos a todos los clientes
@@ -91,7 +91,7 @@ io.on("connection", async (socket) => {
     });
 });
 
-// Crear nuevo producto (POST)
+
 app.post('/api/products', async (req, res) => {
     try {
         const newProduct = req.body;
@@ -107,7 +107,7 @@ app.post('/api/products', async (req, res) => {
     }
 });
 
-// Actualizar un producto (PUT)
+
 app.put('/api/products/:id', async (req, res) => {
     try {
         const productId = parseInt(req.params.id);
@@ -126,7 +126,6 @@ app.put('/api/products/:id', async (req, res) => {
     }
 });
 
-// Eliminar un producto (DELETE)
 app.delete('/api/products/:id', async (req, res) => {
     try {
         const productId = parseInt(req.params.id);
