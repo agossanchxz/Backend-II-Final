@@ -1,0 +1,24 @@
+<h1>Mis productos</h1>
+<div class="contenedorCards">
+    {{#each productos}}
+        <div class="card">
+            <h2>{{this.title}}</h2>
+            <p>{{this.description}}</p>
+            <p>Precio: ${{this.price}}</p>
+            <p>Stock: {{this.stock}}</p>
+            <p>Categoría: {{this.category}}</p>
+            <button class="verDetalles" onclick="window.location='/products/{{this._id}}'">Ver detalles</button>
+            <button class="agregarCarrito" data-id="{{this._id}}">Agregar al carrito</button>
+        </div>
+    {{/each}}
+</div>
+
+<div class="paginacion">
+    {{#if hasPrevPage}}
+        <a href="{{prevLink}}" class="paginaAnterior">Página anterior</a>
+    {{/if}}
+    <span class="paginaActual">Página {{page}}</span>
+    {{#if hasNextPage}}
+        <a href="{{nextLink}}" class="paginaSiguiente">Página siguiente</a>
+    {{/if}}
+</div>
