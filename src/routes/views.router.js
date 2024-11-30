@@ -1,22 +1,25 @@
 import { Router } from "express";
 import ProductModel from "../models/product.model.js";
-import CartManager from "../managers/cart-manager.js"; 
+import CartManager from "../managers/cart-manager.js";
 
 const router = Router();
-const manager = new CartManager(); 
-
+const manager = new CartManager();
 
 router.get("/products", async (req, res) => {
+    const { page = 1, limit = 10, sort = 'asc', query = '' } = req.query;
+
     try {
-        const { page = 1, limit = 10, query = "" } = req.query; 
         const productos = await ProductModel.paginate(
             {
-                name: { $regex: query, $options: "i" }, 
+                $or: [
+                    { title: { $regex: query, $options: 'i' } }, // Filtro por nombre
+                    { category: { $regex: query, $options: 'i' } } // Filtro por categoría
+                ]
             },
             {
                 page: parseInt(page),
                 limit: parseInt(limit),
-                sort: { name: 1 }, 
+                sort: { price: sort === 'asc' ? 1 : -1 }, // Ordenación por precio
             }
         );
 
@@ -36,13 +39,12 @@ router.get("/products", async (req, res) => {
 
 router.get("/realtimeproducts", async (req, res) => {
     try {
-        const productos = await ProductModel.find().lean(); 
+        const productos = await ProductModel.find().lean();
         res.render("realtimeproducts", { productos });
     } catch (error) {
         res.status(500).send("Error al recuperar los productos");
     }
 });
-
 
 router.get("/products/:pid", async (req, res) => {
     const { pid } = req.params;
@@ -57,12 +59,10 @@ router.get("/products/:pid", async (req, res) => {
     }
 });
 
-
 router.get("/carts/:cid", async (req, res) => {
     const { cid } = req.params;
     try {
-        const carrito = await manager.getCarritoById(parseInt(cid));
-        res.render("cartDetail", { carrito });
+        const carrito = await manager.getCarritoById(cid); 
     } catch (error) {
         res.status(500).send("Error al obtener el carrito");
     }
