@@ -1,0 +1,29 @@
+<h2>{{producto.title}}</h2>
+<p>{{producto.description}}</p>
+<p>Precio: ${{producto.price}}</p>
+<p>Stock: {{producto.stock}}</p>
+<p>Categoría: {{producto.category}}</p>
+<button onclick="agregarAlCarrito('{{producto._id}}')">Agregar al carrito</button>
+<a href="/products">Volver a la lista de productos</a>
+
+<script>
+    function agregarAlCarrito(productId) {
+        // Usamos el cartId desde el backend, pasándolo dinámicamente
+        const cartId = '{{cartId}}'; // Asegúrate de pasar cartId desde el backend
+
+        fetch(`/carts/${cartId}/add`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Producto agregado al carrito');
+            } else {
+                alert('Hubo un error al agregar el producto');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
