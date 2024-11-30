@@ -30,11 +30,12 @@
 </div>
 
 <script>
+    const cartId = '{{cartId}}';  // Obtienes el cartId dinámicamente desde el backend
+
     document.querySelectorAll('.agregarCarrito').forEach(button => {
         button.addEventListener('click', (e) => {
             const productId = e.target.getAttribute('data-id');
-            const cartId = 'TU_CART_ID'; 
-
+            
             fetch(`/carts/${cartId}/add`, {
                 method: 'POST',
                 headers: {
