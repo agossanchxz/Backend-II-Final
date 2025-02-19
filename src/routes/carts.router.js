@@ -63,6 +63,18 @@ router.put("/:cid/products/:pid", async (req, res) => {
     } catch (error) {
         res.status(500).json({ status: "error", message: error.message });
     }
+<<<<<<< HEAD
+=======
+});
+
+router.delete("/:cid", async (req, res) => {
+    try {
+        const carrito = await cartManager.eliminarTodosProductosDelCarrito(req.params.cid);
+        res.json({ status: "success", payload: carrito });
+    } catch (error) {
+        res.status(500).json({ status: "error", message: error.message });
+    }
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
 });
 
 router.delete("/:cid", async (req, res) => {

@@ -10,6 +10,7 @@ import ProductManager from './managers/product-manager.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import "./database.js";
+<<<<<<< HEAD
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import passport from './config/passport.js';
@@ -31,24 +32,55 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }
+=======
+import session from 'express-session';  // Agregar el middleware de sesiones
+
+const __filename = fileURLToPath(import.meta.url);
+const _dirname = dirname(__filename);
+
+const app = express();
+const PORT = 8080;
+const cartManager = new CartManager(path.join(_dirname, 'data', 'carts.json'));
+const productManager = new ProductManager(path.join(_dirname, "data", "productos.json"));
+
+// Configuración de sesiones
+app.use(session({
+    secret: 'mi-secreto', // Clave para la firma de la sesión
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }  // Usa true si estás en HTTPS
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
 }));
 
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+<<<<<<< HEAD
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use(passport.initialize());
+=======
+app.use(express.static(path.join(_dirname, 'public')));
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
 
 // Configuración de Handlebars
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
+<<<<<<< HEAD
 app.set("views", path.join(__dirname, "views"));
 
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use("/", viewsRouter);
 app.use('/api/sessions', sessionsRouter);
+=======
+app.set("views", path.join(_dirname, "views"));
+
+
+app.use('/api/products', productsRouter);
+app.use('/api/carts', cartsRouter);
+app.use("/", viewsRouter);
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
 
 const initialProducts = [
     { title: "Fideos", description: "Marolio", code: "abc444", price: 1.5, img: "sin imagen", stock: 85 },
@@ -69,6 +101,7 @@ app.post('/api/carts', async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 const httpServer = app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
@@ -82,9 +115,39 @@ const updateProducts = async () => {
 
 io.on("connection", async (socket) => {
     console.log("Un cliente se conectó");
+=======
+app.post('/api/carts', async (req, res) => {
+    try {
+        const newCart = await cartManager.crearCarrito();
+        req.session.cartId = newCart.id;  // Guardar cartId en la sesión
+        res.status(201).json({ cartId: newCart.id });
+    } catch (error) {
+        res.status(500).json({ message: "Error al crear el carrito", error: error.message });
+    }
+});
+
+const httpServer = app.listen(PORT, () => {
+    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+});
+
+const io = new Server(httpServer);
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
 
     socket.emit("productos", await productManager.getProducts());
 
+<<<<<<< HEAD
+=======
+const updateProducts = async () => {
+    const productos = await productManager.getProducts();
+    io.emit("productos", productos);  // Emitir la lista de productos a todos los clientes
+};
+
+io.on("connection", async (socket) => {
+    console.log("Un cliente se conectó");
+
+    socket.emit("productos", await productManager.getProducts());  // Emitir productos al conectar
+
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
     socket.on("addProduct", async (newProduct) => {
         await productManager.addProduct(newProduct);
         await updateProducts();
@@ -96,10 +159,18 @@ io.on("connection", async (socket) => {
     });
 });
 
+<<<<<<< HEAD
 app.post('/api/products', async (req, res) => {
     try {
         const newProduct = req.body;
         if (!newProduct.title || !newProduct.price || newProduct.stock == null) {
+=======
+
+app.post('/api/products', async (req, res) => {
+    try {
+        const newProduct = req.body;
+        if (!newProduct.title || !newProduct.price || !newProduct.stock) {
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
             return res.status(400).json({ error: 'Faltan campos requeridos' });
         }
         await productManager.addProduct(newProduct);
@@ -111,6 +182,10 @@ app.post('/api/products', async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
 app.put('/api/products/:id', async (req, res) => {
     try {
         const productId = parseInt(req.params.id);

@@ -1,5 +1,9 @@
 import ProductManager from "./ProductManager.js";
+<<<<<<< HEAD
 import CartModel from "../models/cart.model.js"; 
+=======
+import CartModel from "../models/cart.model.js";
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
 
 class CartManager {
     constructor() {
@@ -8,8 +12,13 @@ class CartManager {
 
     async crearCarrito() {
         try {
+<<<<<<< HEAD
             const nuevoCarrito = { products: [] }; 
             const carritoCreado = await CartModel.create(nuevoCarrito); 
+=======
+            const newCart = { products: [] }; 
+            const carritoCreado = await CartModel.create(newCart); 
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
             return carritoCreado;
         } catch (error) {
             console.error("Error al crear carrito:", error);
@@ -19,7 +28,11 @@ class CartManager {
 
     async getCarritoById(carritoId) {
         try {
+<<<<<<< HEAD
             const carrito = await CartModel.findById(carritoId).populate("products.product");
+=======
+            const carrito = await CartModel.findById(carritoId).populate("products.product"); 
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
             if (!carrito) {
                 throw new Error("Carrito no encontrado");
             }
@@ -39,6 +52,10 @@ class CartManager {
 
             if (productoExistente) {
                 productoExistente.quantity += quantity; 
+<<<<<<< HEAD
+=======
+            } else {
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
                 carrito.products.push({ product: productoId, quantity }); 
             }
 
@@ -50,14 +67,21 @@ class CartManager {
         }
     }
 
+<<<<<<< HEAD
  
+=======
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
     async eliminarProductoDelCarrito(carritoId, productoId) {
         try {
             const carrito = await this.getCarritoById(carritoId);
             carrito.products = carrito.products.filter(
                 (item) => item.product._id.toString() !== productoId
             );
+<<<<<<< HEAD
             await carrito.save();
+=======
+            await carrito.save(); 
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
             return carrito;
         } catch (error) {
             console.error("Error al eliminar producto:", error);
@@ -65,6 +89,7 @@ class CartManager {
         }
     }
 
+<<<<<<< HEAD
 
     async actualizarCantidadProductoEnCarrito(carritoId, productoId, cantidad) {
         try {
@@ -75,6 +100,17 @@ class CartManager {
 
             if (producto) {
                 producto.quantity = cantidad;
+=======
+    async actualizarCantidadProductoEnCarrito(carritoId, productoId, cantidad) {
+        try {
+            const carrito = await this.getCarritoById(carritoId);
+            const producto = carrito.products.find(
+                (item) => item.product._id.toString() === productoId
+            );
+
+            if (producto) {
+                producto.quantity = cantidad; 
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
             }
 
             await carrito.save(); 
@@ -85,6 +121,7 @@ class CartManager {
         }
     }
 
+<<<<<<< HEAD
     async actualizarCarrito(carritoId, productos) {
         try {
             const carrito = await this.getCarritoById(carritoId);
@@ -97,11 +134,17 @@ class CartManager {
         }
     }
 
+=======
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
     async eliminarTodosProductosDelCarrito(carritoId) {
         try {
             const carrito = await this.getCarritoById(carritoId);
             carrito.products = []; 
+<<<<<<< HEAD
             await carrito.save();
+=======
+            await carrito.save(); 
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
             return carrito;
         } catch (error) {
             console.error("Error al vaciar carrito:", error);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <h1>Carrito de Compras</h1>
 <div class="contenedorCarrito">
     {{#each carrito.products}}
@@ -13,3 +14,20 @@
 
 <a href="/products">Seguir comprando</a>
 <a href="/checkout/{{carrito._id}}">Ir a pagar</a>
+=======
+<h1>Carrito de Compras</h1>
+<div class="contenedorCarrito">
+    {{#each carrito.products}}
+        <div class="productoCarrito">
+            <h3>{{this.product.title}}</h3>
+            <p>Cantidad: {{this.quantity}}</p>
+            <p>Precio total: ${{this.product.price * this.quantity}}</p>
+        </div>
+    {{/each}}
+</div>
+
+<p><strong>Total: ${{carrito.totalPrice}}</strong></p>
+
+<a href="/products">Seguir comprando</a>
+<a href="/checkout/{{carrito._id}}">Ir a pagar</a>
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060

@@ -33,6 +33,24 @@ cartSchema.methods.addProduct = async function(productId, quantity = 1) {
     }
     await this.save();
 };
+<<<<<<< HEAD
+
+cartSchema.methods.removeProduct = async function(productId) {
+    this.products = this.products.filter(
+        item => item.product.toString() !== productId
+    );
+    await this.save();
+};
+
+cartSchema.statics.createCart = async function() {
+    const cart = new this({ products: [] }); 
+    await cart.save();
+    return cart;
+};
+
+const CartModel = mongoose.model("Cart", cartSchema);
+=======
+>>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
 
 cartSchema.methods.removeProduct = async function(productId) {
     this.products = this.products.filter(
