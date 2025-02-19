@@ -1,9 +1,10 @@
 import express from 'express';
-import { hashPassword, comparePassword } from '../utils/encrypt.js'; 
+import { hashPassword, comparePassword } from '../../utils/encrypt.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import passport from 'passport';
-import User from '../models/user.js';
+import User from '../../models/user.js';
+import Cart from '../../models/cart.js';
 
 dotenv.config();
 
@@ -24,10 +25,22 @@ router.post('/register', async (req, res) => {
 
         const hashedPassword = hashPassword(password);
 
-        const newUser = new User({ first_name, last_name, email, age, password: hashedPassword });
-        await newUser.save();
+    
+        const newCart = new Cart({});
+        await newCart.save();
 
+        const newUser = new User({
+            first_name,
+            last_name,
+            email,
+            age,
+            password: hashedPassword,
+            cart: newCart._id
+        });
+
+        await newUser.save();
         res.status(201).json({ message: 'Usuario registrado con éxito' });
+
     } catch (error) {
         res.status(500).json({ error: 'Error registrando usuario', details: error.message });
     }
@@ -36,7 +49,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).populate('cart');
 
         if (!user || !comparePassword(password, user.password)) {
             return res.status(401).json({ error: 'Credenciales incorrectas' });
@@ -49,6 +62,7 @@ router.post('/login', async (req, res) => {
             secure: process.env.NODE_ENV === "production",
             sameSite: "Strict"
         }).json({ message: 'Login exitoso', token });
+
     } catch (error) {
         res.status(500).json({ error: 'Error en el login', details: error.message });
     }
