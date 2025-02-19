@@ -8,16 +8,23 @@
 <body>
     <h1>Lista de Productos en Tiempo Real</h1>
     <ul id="lista-productos">
+        <!-- Aquí se renderizan los productos -->
         {{#each productos}}
             <li>{{this}}</li>
         {{/each}}
     </ul>
 
+    <!-- Formulario para agregar un nuevo producto -->
+    <label for="nuevoProducto">Nuevo Producto:</label>
     <input id="nuevoProducto" type="text" placeholder="Agregar nuevo producto">
     <button id="agregarProducto">Agregar</button>
+
+    <!-- Formulario para eliminar un producto -->
+    <label for="productoEliminar">Eliminar Producto:</label>
     <input id="productoEliminar" type="text" placeholder="Eliminar producto">
     <button id="eliminarProducto">Eliminar</button>
 
+    <!-- Scripts -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/main.js"></script>
 </body>
