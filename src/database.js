@@ -1,15 +1,32 @@
-<<<<<<< HEAD
-import mongoose from "mongoose"
+import mongoose from 'mongoose';
+import app from './app.js';
+import initializeProducts from './initProducts.js';
+import dotenv from 'dotenv';
 
-mongoose.connect("mongodb+srv://agossanchxz:Machain4229@cluster0.0stmk.mongodb.net/E-commerce?retryWrites=true&w=majority&appName=Cluster0")
+dotenv.config();
 
-.then(() => console.log("Conectados a la BD"))
-.catch( (error) => console.log("Error al conectarse", error ))
-=======
-import mongoose from "mongoose"
+const PORT = process.env.PORT || 3003;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/backend2';
 
-mongoose.connect("mongodb+srv://agossanchxz:Machain4229@cluster0.0stmk.mongodb.net/E-commerce?retryWrites=true&w=majority&appName=Cluster0")
+const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('Conectado a MongoDB');
 
-.then(() => console.log("Conectados a la BD"))
-.catch( (error) => console.log("Error al conectarse", error ))
->>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
+
+    await initializeProducts();
+
+
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error(' Error en la conexión a MongoDB:', error);
+    process.exit(1); 
+  }
+};
+
+connectDB();

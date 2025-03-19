@@ -6,13 +6,11 @@ const agregarProductoBtn = document.getElementById('agregarProducto');
 const productoEliminarInput = document.getElementById('productoEliminar');
 const eliminarProductoBtn = document.getElementById('eliminarProducto');
 
-
 const cartId = sessionStorage.getItem('cartId');
 
 if (!cartId) {
     alert('No se encontró el carrito. Crea un carrito primero.');
 } else {
-   
     socket.on('actualizarProductos', (productos) => {
         listaProductos.innerHTML = '';
         productos.forEach(producto => {
@@ -21,7 +19,6 @@ if (!cartId) {
             listaProductos.appendChild(li);
         });
     });
-
 
     agregarProductoBtn.addEventListener('click', () => {
         const nuevoProducto = nuevoProductoInput.value;
@@ -62,8 +59,4 @@ if (!cartId) {
             });
         });
     });
-<<<<<<< HEAD
-}
-=======
-}
->>>>>>> ef341824020be9515ccd08f2cf1affd2db50b060
+} // <-- Add this closing bracket

@@ -1,20 +1,30 @@
-import passport from "passport";
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
+import passport from 'passport';
 
 export const authenticateJWT = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.cookies.jwt; 
 
     if (!token) {
-        return res.status(401).json({ error: "No autorizado, token no encontrado" });
+        return res.status(403).json({ message: 'No se encontró el token. Acceso denegado.' });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET || "fallback-secret", (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
-            return res.status(403).json({ error: "Token inválido o expirado" });
+            return res.status(403).json({ message: 'Token inválido o expirado.' });
         }
-        req.user = decoded; 
+        req.user = user;
         next();
     });
 };
 
-export const passportJWTAuth = passport.authenticate("jwt", { session: false });
+export const initializePassport = () => {
+    console.warn("initializePassport() no configura estrategias. Asegúrate de definirlas en otro archivo.");
+    return passport.initialize();
+};
+
+export const authorizeAdmin = (req, res, next) => {
+    if (!req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Acceso denegado: Se requiere rol de administrador.' });
+    }
+    next();
+};
